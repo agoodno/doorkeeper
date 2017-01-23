@@ -47,12 +47,6 @@ module Doorkeeper::OAuth::Helpers
         expect(URIChecker.matches?(uri, client_uri)).to be_truthy
       end
 
-      it 'ignores query parameter on comparsion' do
-        uri = 'http://app.co/?query=hello'
-        client_uri = 'http://app.co'
-        expect(URIChecker.matches?(uri, client_uri)).to be_truthy
-      end
-
       it 'doesn\'t allow non-matching domains through' do
         uri = 'http://app.abc/?query=hello'
         client_uri = 'http://app.co'
@@ -69,6 +63,11 @@ module Doorkeeper::OAuth::Helpers
     describe '.valid_for_authorization?' do
       it 'is true if valid and matches' do
         uri = client_uri = 'http://app.co/aaa'
+        expect(URIChecker.valid_for_authorization?(uri, client_uri)).to be_truthy
+      end
+
+      it 'is true if valid and matches with query params' do
+        uri = client_uri = 'http://app.co/aaa?waffles=abc'
         expect(URIChecker.valid_for_authorization?(uri, client_uri)).to be_truthy
       end
 
@@ -93,11 +92,6 @@ module Doorkeeper::OAuth::Helpers
       it 'is true if valid and matches' do
         uri = client_uri = 'http://app.co/aaa'
         expect(URIChecker.valid_for_authorization?(uri, client_uri)).to be true
-      end
-
-      it 'is false if invalid' do
-        uri = client_uri = 'http://app.co/aaa?waffles=abc'
-        expect(URIChecker.valid_for_authorization?(uri, client_uri)).to be false
       end
     end
   end
